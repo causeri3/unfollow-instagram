@@ -10,7 +10,7 @@ See who doesn't follow you back and unfollow them manually.
 ### 1. Download your data from instagram:
    * **You need to:**
        * Request your data from Instagram in JSON format. [Click here.](https://www.instagram.com/accounts/login/?next=https%3A%2F%2Faccountscenter.instagram.com%2Finfo_and_permissions%2Fdyi%2F%3F__coig_login%3D1)
-       * Put the folder *followers_and_following* inside the directory of this repository
+       * Put the folder *followers_and_following* inside the directory of this repository (the folder will be somewhere in the folder structure of the data you downloaded, depending on what you clicked.)
        * Install dependencies (see below)
        * Run
          * with uv
@@ -32,13 +32,13 @@ See who doesn't follow you back and unfollow them manually.
        * standard
         `python unfollow_with_account.py  -t target_account -u username_scrap_account -p password_scrap_account`
   * **Pros:**
-    * Automisable (Once extended with login to teh actual account, the unfolling could be automated as well and the whole thing could be scheduled by a cron job)
+    * Automisable (Once extended with login to the actual account, the unfollowing could be automated as well and the whole thing could be scheduled by a cron job)
     * No waiting for instagram to give you your data
 
 
 ## Dependencies
 ### Python
-I used python 3.8  - you could peg it with `uv venv --python 3.8` but properly not necessary
+I tried it with python 3.8 & 3.13  - you could peg it with `uv venv --python 3.13` but properly not necessary
 
 ### Python packages 
 You can install them via
