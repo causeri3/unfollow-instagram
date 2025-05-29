@@ -11,7 +11,7 @@ import random
 
 
 from args import get_args_wa
-args, _ = get_args_wa()
+
 
 
 class InstaScrapFollow():
@@ -66,12 +66,31 @@ class InstaScrapFollow():
         self.no_following = int(self.following_button.text.split()[0])
 
     def get_accounts_loop(self, accounts_set, no_accounts):
+        stalled_scrolls = 0
+        max_scrolls = 5
         while len(accounts_set) < no_accounts:
+            lst_len_accounts_set = len(accounts_set)
             self.extract_names(accounts_set)
             print(f"# extracted: {len(accounts_set)} of total {no_accounts}")
             self.scroll()
             sleep(3)
-        print('All accounts names are extracted')
+            if lst_len_accounts_set == len(accounts_set):
+                stalled_scrolls += 1
+            else:
+                stalled_scrolls = 0
+
+            if stalled_scrolls >= max_scrolls:
+                raise RuntimeError(
+                """
+                No new accounts visible after {} scrolls.
+                Only got {} out of a total of {} accounts.
+                Instagram may be limiting the list. This account might be (shadow) banned.
+                It worked for me once target and scrape account were the same. But more risky.""".format(max_scrolls,
+                                                                                                         len(accounts_set),
+                                                                                                         no_accounts)
+                )
+            self.quit()
+        print('All account names are extracted')
 
     def extract_names(self, name_set):
         elements = self.driver.find_elements(By.XPATH, "//div[@role='dialog']//div[@role='button']")
@@ -84,20 +103,16 @@ class InstaScrapFollow():
         sleep(3)
 
     def get_followers(self):
-        try:
-            self.init_follower_button()
-            self.followers_button.click()
-            self.get_accounts_loop(self.followers, self.no_follower)
-        except Exception as e:
-            print(e)
+        self.init_follower_button()
+        self.followers_button.click()
+        self.get_accounts_loop(self.followers, self.no_follower)
+
 
     def get_following(self):
-        try:
-            self.init_following_button()
-            self.following_button.click()
-            self.get_accounts_loop(self.following, self.no_following)
-        except Exception as e:
-            print(e)
+        self.init_following_button()
+        self.following_button.click()
+        self.get_accounts_loop(self.following, self.no_following)
+
 
     def print_href_to_unfollow(self):
         not_following_back = self.following - self.followers
@@ -110,6 +125,8 @@ class InstaScrapFollow():
 
 
 if __name__ == "__main__":
+    args, _ = get_args_wa()
+
     InstaScraper = InstaScrapFollow(args.username, args.password)
     InstaScraper.login()
     InstaScraper.go_to_target_profile(args.target_account)
